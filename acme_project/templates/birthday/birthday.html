@@ -1,10 +1,20 @@
 {% extends "base.html" %}
+<!-- Подключаем библиотеку django_bootstrap5. -->
+{% load django_bootstrap5 %}
 
 {% block content %}
-    <form>
-        {{ form.as_p }}
-        <input type="submit" value="Отправить">
-    </form>
+    <div class="card col-4">
+        <div class="card-header">
+        Калькулятор ожидания дня рождения
+        </div>
+        <div class="card-body">
+            <form>
+                <!-- Выводим поля формы с помощью специального тега. -->
+                {% bootstrap_form form %}
+                {% bootstrap_button button_type="submit" content="Отправить" %}
+            </form>
+        </div>
+    </div>
     {% with data=request.GET %}
         <!-- В дальнейшем используем имя data вместо request.GET -->
         {% if form.is_valid %}
