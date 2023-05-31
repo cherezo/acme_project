@@ -3,21 +3,50 @@
 {% load django_bootstrap5 %}
 
 {% block content %}
+     <!-- После сохранения в базу, полученных с помощью POST-запроса данных от пользователя, 
+        созданный объект передаётся в объект form 
+    и становится доступен в шаблоне через атрибут form.instance. 
+    Получить id этого объекта можно так: {{ form.instance.id }}
+    Заменяем data=request.POST на data=form.instance
+    -->
+    <!-- Переносим тег with в самое начало блока content. -->
+    {% with data=form.instance %}
+
+    <!-- Если в пути запроса содержится строка /edit/. -->
+    {% if '/edit/' in request.path %}
+        <!-- Вывести заголовок и номер записи. -->
+        <h1>Редактировать запись {{ data.pk }}</h1>
+        <!-- Вывести предупреждение об удалении и номер записи. -->
+    {% elif "/delete/" in request.path %}
+        <h1>Удалить запись {{ data.pk }}</h1>
+    {% else %}
+        <h1>Создать запись</h1>
+    {% endif %}
     <div class="card col-4">
         <div class="card-header">
         Калькулятор ожидания дня рождения
         </div>
         <div class="card-body">
-            <form>
-                <!-- Выводим поля формы с помощью специального тега. -->
-                {% bootstrap_form form %}
+            <form method="post" enctype="multipart/form-data">
+                <!-- Добавьте тег csrf_token. Без него POST-запрос будет отклонён. -->
+                {% csrf_token %}
+                {% if not "/delete/" in request.path %}
+                    <!-- Выводим поля формы с помощью специального тега. -->
+                    {% bootstrap_form form %}
+                    <!-- Если есть запрос на удаление записи- выводим только данные из БД. -->
+                {% else %}
+                    <p>{{ data.first_name }} {{ data.last_name }}</p>
+                    <p>{{ data.birthday }}</p>
+                {% endif %}
                 {% bootstrap_button button_type="submit" content="Отправить" %}
             </form>
         </div>
     </div>
-    {% with data=request.GET %}
-        <!-- В дальнейшем используем имя data вместо request.GET -->
+   
+        <!-- В дальнейшем используем имя data вместо request.POST -->
         {% if form.is_valid %}
+            ID новой записи в БД: {{ data.id }}
+            <hr>
             <h2>Привет, {{ data.first_name }} {{ data.last_name }}</h2>
             <!-- Если до дня рождения 0 дней... -->
             {% if birthday_countdown == 0 %}
