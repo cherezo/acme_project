@@ -60,6 +60,14 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+LOGIN_URL = 'login' 
+#Сюда перенаправляем пользователя, после того как он залогинился
+LOGIN_REDIRECT_URL = 'pages:homepage'
+
+# Подключаем бэкенд filebased.EmailBackend:
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# Указываем директорию, в которую будут сохраняться файлы писем:
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
