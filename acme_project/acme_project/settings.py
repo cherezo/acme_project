@@ -6,7 +6,13 @@ SECRET_KEY = 'django-insecure-m&$lzdzkutvrbr5vt=jpm)7#g7cken_tk%($ty+w902n7wb#=e
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    # Когда проект будет опубликован и станет доступен для пользователей,
+    # в этот список нужно будет добавить и адреса домена, где он будет размещён,
+    # например 'acme.not' и 'www.acme.not'
+    ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -16,8 +22,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'birthday.apps.BirthdayConfig',
+    'core.apps.CoreConfig',
     'pages.apps.PagesConfig',
     'django_bootstrap5',
+    # Регистрируем новое приложение в проекте:
+    # обязательно ниже, чем django.contrib.staticfiles.
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -28,7 +38,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # MIDDLEWARE — список промежуточных программных слоёв, подключённых к проекту.
+    # DebugToolbarMiddleware будет обрабатывать информацию из запросов
+    # и отображать её в панели Django Debug Toolbar.
+    # Добавьте DebugToolbarMiddleware в самый конец списка.
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+# Добавьте в settings.py эту константу, чтобы Django Debug Toolbar знал,
+# запросы с каких IP он должен обрабатывать.
+INTERNAL_IPS = ['127.0.0.1']
 
 ROOT_URLCONF = 'acme_project.urls'
 
@@ -97,3 +115,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'

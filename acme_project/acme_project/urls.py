@@ -9,6 +9,8 @@ from django.contrib.auth.forms import UserCreationForm
 # Импортируем класс создания пользователя.
 from django.views.generic.edit import CreateView
 
+handler404 = 'core.views.page_not_found'
+
 urlpatterns = [
     path('', include('pages.urls')),
     path('admin/', admin.site.urls),
@@ -26,6 +28,16 @@ urlpatterns = [
         ),
         name='registration',
     ),
+
+]
+
+# Подключаем дебаг-панель:
+if settings.DEBUG:
+    import debug_toolbar
+    # Добавить к списку urlpatterns список адресов
+    # из приложения debug_toolbar:
+    urlpatterns += (path('__debug__/', include(debug_toolbar.urls)),)
+
 # В конце добавляем к списку вызов функции static.
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
